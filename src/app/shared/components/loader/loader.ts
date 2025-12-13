@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../../../core/services/loading';
 
@@ -98,7 +98,8 @@ import { LoadingService } from '../../../core/services/loading';
       animation: bounce 1s infinite;
       animation-delay: 0.4s;
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoaderComponent {
   loadingService = inject(LoadingService);

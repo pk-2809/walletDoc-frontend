@@ -1,3 +1,4 @@
+
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { authSignals } from '../../../state/auth-signals';
@@ -18,7 +19,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (token && !skipAuth) {
     req = req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token} `
       }
     });
   }

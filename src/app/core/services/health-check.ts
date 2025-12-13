@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ApiService } from '../api/api.service';
+import { ApiService } from '../api/api';
 import { Observable, catchError, of } from 'rxjs';
 
 @Injectable({
@@ -11,11 +11,11 @@ export class HealthCheckService {
   check(): Observable<boolean> {
     return new Observable(observer => {
       this.api.get(`health`).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           observer.next(true);
           observer.complete();
         },
-        error: (error) => {
+        error: (error: any) => {
           observer.next(false);
           observer.complete();
         }

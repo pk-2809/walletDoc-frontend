@@ -1,16 +1,17 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LoaderComponent } from './shared/components/loader/loader.component';
-import { HealthCheckComponent } from './shared/components/health-check/health-check.component';
-import { AuthService } from './features/auth/auth.service';
+import { LoaderComponent } from './shared/components/loader/loader';
+import { HealthCheckComponent } from './shared/components/health-check/health-check';
+import { AuthService } from './features/auth/auth';
 
-import { ToastComponent } from './shared/components/toast/toast.component';
+import { ToastComponent } from './shared/components/toast/toast';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, LoaderComponent, HealthCheckComponent, ToastComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App implements OnInit {
   private authService = inject(AuthService);

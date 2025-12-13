@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../api/api.service';
+import { ApiService } from '../api/api';
 import { DocumentList } from '../models/dashboard.model';
 import { Utility } from '../../shared/utils/utility';
 import { Router } from '@angular/router';
@@ -30,7 +30,7 @@ export class Document {
           observer.next(_res.data);
           observer.complete();
         },
-        error: (err) => {
+        error: (err: any) => {
           console.log(err);
           observer.next(false);
           observer.complete();
@@ -61,7 +61,7 @@ export class Document {
             observer.error('Document not found');
           }
         },
-        error: (err) => observer.error(err)
+        error: (err: any) => observer.error(err)
       });
     });
   }
@@ -78,7 +78,7 @@ export class Document {
             observer.error('Document not found');
           }
         },
-        error: (err) => observer.error(err)
+        error: (err: any) => observer.error(err)
       });
     });
   }
@@ -96,7 +96,7 @@ export class Document {
             observer.complete();
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error(err);
           observer.error(err);
         }

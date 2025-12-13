@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { ApiService } from '../../core/api/api.service';
+import { ApiService } from '../../core/api/api';
 import { authSignals, User as AuthUser } from '../../state/auth-signals';
 import { UserService } from '../../core/services/user';
 

@@ -1,18 +1,20 @@
-import { Component, signal, computed, inject } from '@angular/core';
+
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Field, form } from '@angular/forms/signals';
 import { isValidEmail, isStrongPassword, passwordsMatch } from '../../../shared/utils/validators';
-import { AuthService } from '../auth.service';
-import { ToastService } from '../../../shared/services/toast.service';
+import { AuthService } from '../auth';
+import { ToastService } from '../../../shared/services/toast';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
   imports: [RouterLink, FormsModule, CommonModule, Field],
-  templateUrl: './signup.component.html',
-  styleUrl: './signup.component.css'
+  templateUrl: './signup.html',
+  styleUrl: './signup.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignupComponent {
   private authService = inject(AuthService);

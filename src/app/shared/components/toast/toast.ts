@@ -1,7 +1,7 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ToastService } from '../../services/toast.service';
+import { ToastService } from '../../services/toast';
 
 @Component({
   selector: 'app-toast',
@@ -43,7 +43,8 @@ import { ToastService } from '../../services/toast.service';
       from { opacity: 0; transform: translateY(20px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastComponent {
   toastService = inject(ToastService);

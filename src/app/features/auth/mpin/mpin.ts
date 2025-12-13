@@ -1,16 +1,22 @@
-import { Component, inject, signal, effect } from '@angular/core';
+
+import { Component, inject, signal, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user';
-import { ToastService } from '../../../shared/services/toast.service';
+import { ToastService } from '../../../shared/services/toast';
 import { authSignals } from '../../../state/auth-signals';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { ToastComponent } from '../../../shared/components/toast/toast';
+import { AuthService } from '../auth';
 
 @Component({
     selector: 'app-mpin',
     standalone: true,
-    imports: [CommonModule],
-    templateUrl: './mpin.component.html',
-    styleUrl: './mpin.component.css'
+    imports: [CommonModule, ReactiveFormsModule],
+    templateUrl: './mpin.html',
+    styleUrl: './mpin.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MpinComponent {
     private userService = inject(UserService);
@@ -23,8 +29,8 @@ export class MpinComponent {
     pin = signal<string>('');
 
     constructor() {
-      const scanId = this.route.snapshot.queryParamMap.get('scanId') ?? '';
-      this.userId.set(scanId ?? '');
+        const scanId = this.route.snapshot.queryParamMap.get('scanId') ?? '';
+        this.userId.set(scanId ?? '');
         effect(() => {
             if (this.pin().length === 4) {
                 this.verifyPin();
@@ -52,7 +58,7 @@ export class MpinComponent {
                     this.toastService.show('Verified successfully', 'success');
                     setTimeout(() => {
                         this.router.navigate(['/dashboard']);
-                    }, 100); 
+                    }, 100);
                 } else {
                     this.toastService.show('Invalid M-PIN', 'error');
                     this.pin.set('');

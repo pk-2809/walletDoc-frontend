@@ -1,18 +1,20 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Field, form } from '@angular/forms/signals';
 import { isValidEmail, isStrongPassword } from '../../../shared/utils/validators';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../auth';
 import { UserService } from '../../../core/services/user';
 import { User } from '../../../core/models/user.model';
-import { ToastService } from '../../../shared/services/toast.service';
+import { ToastService } from '../../../shared/services/toast';
+import { ToastComponent } from '../../../shared/components/toast/toast';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [RouterLink, Field],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  templateUrl: './login.html',
+  styleUrl: './login.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
   private authService = inject(AuthService);
@@ -20,8 +22,8 @@ export class LoginComponent {
   private toastService = inject(ToastService);
 
   login = signal({
-    email: 'pranav@gmail.com',
-    password: 'Qwerty12',
+    email: '',
+    password: '',
     showPassword: false
   });
 

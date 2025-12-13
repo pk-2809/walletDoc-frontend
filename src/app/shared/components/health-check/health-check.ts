@@ -1,13 +1,15 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HealthCheckService } from '../../../core/services/health-check';
+import { env } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-health-check',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './health-check.component.html',
-  styleUrls: ['./health-check.component.css']
+  templateUrl: './health-check.html',
+  styleUrl: './health-check.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HealthCheckComponent implements OnInit {
   private healthCheckService = inject(HealthCheckService);
@@ -15,6 +17,7 @@ export class HealthCheckComponent implements OnInit {
   isChecking = signal(true);
   healthCheckFailed = signal(false);
   statusMessage = signal('INITIALIZING SECURE CONNECTION...');
+  appVersion = env.appVersion;
 
   ngOnInit() {
     this.performHealthCheck();

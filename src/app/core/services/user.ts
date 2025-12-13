@@ -1,12 +1,12 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { UpdateUser, User } from '../models/user.model';
 import { Observable } from 'rxjs';
-import { ApiService } from '../api/api.service';
+import { ApiService } from '../api/api';
 import { Dashboard } from '../models/dashboard.model';
 import { Router } from '@angular/router';
 import { authSignals } from '../../state/auth-signals';
 import { Utility } from '../../shared/utils/utility';
-import { ToastService } from '../../shared/services/toast.service';
+import { ToastService } from '../../shared/services/toast';
 
 @Injectable({
   providedIn: 'root'
@@ -64,7 +64,7 @@ export class UserService {
             observer.next(true);
             observer.complete();
           },
-          error: (error) => {
+          error: (error: any) => {
             authSignals.clearAuth();
             this.router.navigate(['/login']);
             this.toastService.show('Session expired. Please login again.', 'error');
@@ -123,7 +123,7 @@ export class UserService {
           }
           observer.complete();
         },
-        error: (error) => {
+        error: (error: any) => {
           observer.error(error);
         }
       });
@@ -142,7 +142,7 @@ export class UserService {
             observer.error('Failed to get base64 image');
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error(err);
           observer.error(err);
         }
@@ -162,7 +162,7 @@ export class UserService {
           }
           observer.complete();
         },
-        error: (error) => {
+        error: (error: any) => {
           observer.error(error);
         }
       });
@@ -196,7 +196,7 @@ export class UserService {
           }
           observer.complete();
         },
-        error: (error) => {
+        error: (error: any) => {
           observer.error(error);
         }
       });

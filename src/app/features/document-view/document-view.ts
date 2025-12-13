@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild, ElementRef, computed } from '@angular/core';
+import { Component, inject, signal, ViewChild, ElementRef, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Utility } from '../../shared/utils/utility';
@@ -7,15 +7,16 @@ import { Document } from '../../core/services/document';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { UserService } from '../../core/services/user';
-import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
-import { ToastService } from '../../shared/services/toast.service';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { ToastService } from '../../shared/services/toast';
 
 @Component({
     selector: 'app-document-view',
     standalone: true,
-    imports: [CommonModule, SafePipe, ConfirmDialogComponent],
-    templateUrl: './document-view.component.html',
-    styleUrl: './document-view.component.css'
+    imports: [CommonModule, ConfirmDialogComponent, SafePipe],
+    templateUrl: './document-view.html',
+    styleUrl: './document-view.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentViewComponent {
     private route = inject(ActivatedRoute);

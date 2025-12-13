@@ -1,16 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { authSignals } from '../../../state/auth-signals';
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from '../../auth/auth';
 import { form } from '@angular/forms/signals';
 import { UserService } from '../../../core/services/user';
 import { User } from '../../../core/models/user.model';
 import { isValidEmail, isValidMobile } from '../../../shared/utils/validators';
 import { Utility } from '../../../shared/utils/utility';
 import { QRCodeComponent } from 'angularx-qrcode';
-import { ToastService } from '../../../shared/services/toast.service';
+import { ToastComponent } from '../../../shared/components/toast/toast';
+import { ToastService } from '../../../shared/services/toast';
 import { env } from '../../../../environments/environment';
 import html2canvas from 'html2canvas';
 
@@ -18,8 +19,9 @@ import html2canvas from 'html2canvas';
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, QRCodeComponent, FormsModule],
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  templateUrl: './profile.html',
+  styleUrl: './profile.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileComponent {
   private authService = inject(AuthService);
@@ -65,6 +67,8 @@ export class ProfileComponent {
   isUpdatingMobile = signal(false); // Loader for mobile
   newMobile = signal('');
 
+  appVersion = env.appVersion;
+
   constructor() {
     console.log(this.userService.currentUser());
     const resData: User | null = this.userService.currentUser();
@@ -74,7 +78,7 @@ export class ProfileComponent {
       mobileNumber: resData?.mobile || '',
       email: resData?.email || '',
       masterPin: resData?.masterPin || '',
-      qrData: `${env}/verify-pin?scanId=${resData?.id}`,
+      qrData: `${env.BASE_URL}/verify-pin?scanId=${resData?.id}`,
       sizeUsed: this.utility.getSizeWithUnit(resData?.storageUsed || 0),
       totalSize: resData?.storageLimit || 0,
       usedPercentage: this.getPercentage(resData?.storageUsed || 0, resData?.storageLimit || 0),

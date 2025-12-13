@@ -1,0 +1,64 @@
+@if (isChecking()) {
+<div class="fixed inset-0 health-check-container flex items-center justify-center z-50">
+    <!-- Radar Rings -->
+    <div class="pulse-ring w-20 h-20"></div>
+    <div class="pulse-ring w-20 h-20"></div>
+    <div class="pulse-ring w-20 h-20"></div>
+
+    <div class="text-center px-4 relative z-10">
+        <!-- Logo Container -->
+        <div class="mb-10 flex justify-center">
+            <div
+                class="w-32 h-32 bg-white/10 backdrop-blur-md rounded-3xl flex items-center justify-center border border-white/20 floating-logo">
+                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Text -->
+        <h1 class="text-5xl font-black text-white mb-2 tracking-[0.2em] fade-in-up">WALLET</h1>
+        <h1 class="text-5xl font-black text-[#818cf8] mb-8 tracking-[0.2em] fade-in-up delay-100">DOC</h1>
+
+        <!-- Progress Bar -->
+        <div class="w-64 h-1.5 loading-bar-container mx-auto mb-6 fade-in-up delay-200">
+            <div class="loading-bar-fill"></div>
+        </div>
+
+        <!-- Status Text -->
+        <p class="text-blue-200/80 text-sm font-mono tracking-widest uppercase fade-in-up delay-300">
+            {{ statusMessage() }}
+        </p>
+    </div>
+</div>
+}
+
+@if (healthCheckFailed()) {
+<div class="fixed inset-0 health-check-container flex items-center justify-center z-50">
+    <div class="text-center px-4 relative z-10 max-w-md w-full">
+        <!-- Error Icon -->
+        <div class="mb-8 flex justify-center">
+            <div
+                class="w-28 h-28 bg-red-500/20 backdrop-blur-md rounded-full flex items-center justify-center border border-red-500/50 error-pulse">
+                <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+
+        <h2 class="text-3xl font-bold text-white mb-2 tracking-wider">CONNECTION LOST</h2>
+        <p class="text-blue-200/60 mb-10 text-sm leading-relaxed">
+            We cannot reach the secure server. This might be due to your network connection.
+        </p>
+
+        <button (click)="retry()"
+            class="w-full bg-white text-[#1e1b4b] py-4 rounded-xl font-black text-sm hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-widest shadow-lg shadow-white/10">
+            Retry Secure Connection
+        </button>
+    </div>
+</div>
+}

@@ -1,0 +1,85 @@
+<div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden">
+
+    <!-- Decorative Blooms (Subtle) -->
+    <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#4c49c3]/5 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-400/5 rounded-full blur-[100px]"></div>
+
+    <div class="w-full max-w-sm flex flex-col items-center relative z-10">
+
+        <!-- Header -->
+        <div class="text-center mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div
+                class="w-16 h-16 bg-white rounded-2xl shadow-lg shadow-indigo-500/10 flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-[#4c49c3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-black text-gray-900 tracking-tight uppercase mb-2">Security Check</h2>
+            <p class="text-gray-500 font-medium text-sm">Enter your 4-digit M-PIN</p>
+        </div>
+
+        <!-- PIN Dots -->
+        <div class="flex gap-6 mb-12">
+            @for (i of [0,1,2,3]; track i) {
+            <div class="w-4 h-4 rounded-full transition-all duration-300 border-2"
+                [class.bg-[#4c49c3]]="pin().length > i" [class.border-[#4c49c3]]="pin().length > i"
+                [class.scale-110]="pin().length > i" [class.shadow-lg]="pin().length > i"
+                [class.shadow-indigo-500/30]="pin().length > i" [class.bg-gray-100]="pin().length <= i"
+                [class.border-gray-200]="pin().length <= i">
+            </div>
+            }
+        </div>
+
+        <!-- Loader Overlay -->
+        @if (isLoading()) {
+        <div
+            class="absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-3xl animate-in fade-in">
+            <div class="flex flex-col items-center">
+                <div class="w-12 h-12 border-4 border-[#4c49c3] border-t-transparent rounded-full animate-spin mb-4">
+                </div>
+                <span class="text-[#4c49c3] font-bold tracking-widest uppercase text-xs">Verifying...</span>
+            </div>
+        </div>
+        }
+
+        <!-- Keypad -->
+        <div class="grid grid-cols-3 gap-x-6 gap-y-6 w-full max-w-[280px]">
+            @for (num of [1,2,3,4,5,6,7,8,9]; track num) {
+            <button (click)="addDigit(num)" (touchstart)="$event.stopPropagation()" class="w-20 h-20 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl font-bold text-gray-900 
+                       hover:shadow-md hover:border-[#4c49c3]/20 hover:scale-[1.02] 
+                       active:scale-75 active:bg-[#4c49c3] active:text-white active:shadow-inner active:border-[#4c49c3]
+                       transition-all duration-75 ease-out outline-none touch-manipulation select-none cursor-pointer">
+                {{num}}
+            </button>
+            }
+
+            <!-- Empty Space -->
+            <div class="w-20 h-20"></div>
+
+            <!-- Zero -->
+            <button (click)="addDigit(0)" (touchstart)="$event.stopPropagation()" class="w-20 h-20 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-2xl font-bold text-gray-900 
+                       hover:shadow-md hover:border-[#4c49c3]/20 hover:scale-[1.02] 
+                       active:scale-75 active:bg-[#4c49c3] active:text-white active:shadow-inner active:border-[#4c49c3]
+                       transition-all duration-75 ease-out outline-none touch-manipulation select-none cursor-pointer">
+                0
+            </button>
+            <!-- Backspace -->
+            <button (click)="removeDigit()" class="w-20 h-20 rounded-2xl flex items-center justify-center text-gray-400 
+                       hover:text-red-500 hover:bg-red-50 
+                       active:scale-[0.85] active:bg-red-100 active:text-red-600 active:shadow-inner
+                       transition-all duration-75 ease-out outline-none touch-manipulation select-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Footer Action -->
+        <button class="mt-12 text-xs font-bold text-[#4c49c3] uppercase tracking-wider hover:underline p-2">
+            Forgot PIN?
+        </button>
+
+    </div>
+</div>

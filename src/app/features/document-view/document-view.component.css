@@ -1,0 +1,19 @@
+:host {
+    display: block;
+}
+
+/* Ensure smooth transitions for transforms */
+.transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Hide scrollbars but allow scrolling if needed in future */
+main {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+main::-webkit-scrollbar {
+    display: none;
+}

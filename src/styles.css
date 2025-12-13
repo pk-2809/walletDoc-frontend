@@ -1,3 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "tailwindcss";
+
+/* Screen reader only utility class for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Global reset for mobile gestures */
+html,
+body {
+  touch-action: pan-x pan-y;
+  /* Disables pinch zoom */
+  -webkit-tap-highlight-color: transparent;
+  /* Removes default gray tap highlight */
+  overscroll-behavior-y: none;
+  /* Disables pull-to-refresh effects if needed, optional */
+}

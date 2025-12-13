@@ -1,0 +1,117 @@
+<div class="fixed inset-0 bg-black z-50 flex flex-col h-dvh w-screen overflow-hidden">
+
+  <!-- Header Control -->
+  <header
+    class="absolute top-0 left-0 right-0 p-4 z-20 transition-transform duration-300 bg-linear-to-b from-black/80 via-black/40 to-transparent pb-12"
+    [class.-translate-y-full]="!showControls()">
+    <div class="flex justify-between items-center text-white drop-shadow-md">
+      <button (click)="goBack()"
+        class="p-2 rounded-full hover:bg-white/20 active:scale-95 transition-all bg-black/20 backdrop-blur-sm">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <div class="flex-1 mx-4 text-center">
+        <h1 class="font-bold text-lg leading-tight text-white mb-0.5 shadow-black">{{ document()?.docName }}</h1>
+        <div class="text-xs font-medium text-gray-100/90 shadow-black">
+          {{ document()?.uploadedTime }} • {{ utilityService.getSizeWithUnit(document()?.docSize || 0) }}
+        </div>
+      </div>
+
+      <div class="flex space-x-2">
+        <!-- Delete -->
+        @if (!userService.isRestricted()) {
+        <button (click)="onDeleteClick()"
+          class="p-2 rounded-full hover:bg-white/20 text-red-400 active:scale-95 transition-all bg-black/20 backdrop-blur-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 relative flex items-center justify-center bg-black w-full h-full" (click)="toggleControls()">
+
+    @if (document(); as doc) {
+    @if (isPdf) {
+    <!-- PDF Viewer -->
+    <div class="w-full h-full bg-gray-900 flex items-center justify-center">
+      <!-- Using object/iframe for PDF. On mobile this might trigger download or use native viewer depending on OS -->
+      <object [data]="(doc.docUrl + '#toolbar=0&navpanes=0&scrollbar=0') | safe: 'resourceUrl'" type="application/pdf"
+        class="w-full h-full">
+        <p class="text-white text-center p-4">
+          Unable to display PDF directly.
+          <a [href]="doc.docUrl" target="_blank" class="text-blue-400 underline">Download</a>
+        </p>
+      </object>
+    </div>
+    } @else {
+    <!-- Image Viewer with Gestures -->
+    <div class="overflow-hidden w-full h-full flex items-center justify-center touch-none"
+      (touchstart)="handleDoubleTap($event)" (mousedown)="startDrag($event)" (touchstart)="startDrag($event)"
+      (mousemove)="onDrag($event)" (touchmove)="onDrag($event)" (mouseup)="endDrag()" (touchend)="endDrag()"
+      (mouseleave)="endDrag()">
+
+      <img [src]="doc.docUrl || 'assets/placeholder-doc.png'"
+        class="max-w-full max-h-full object-contain transition-transform duration-75 ease-linear select-none"
+        [style.transform]="'scale(' + zoomLevel() + ') translate(' + panX() + 'px, ' + panY() + 'px)'"
+        alt="Document Preview" #imageRef draggable="false" />
+    </div>
+    }
+    } @else {
+    <div class="text-white">Loading...</div>
+    }
+  </main>
+
+  <!-- Footer Actions -->
+  <footer
+    class="absolute bottom-0 left-0 right-0 p-6 z-20 transition-transform duration-300 bg-linear-to-t from-black/80 to-transparent flex justify-center space-x-8"
+    [class.translate-y-full]="!showControls()">
+
+    <!-- Share -->
+    <button (click)="shareDocument(); $event.stopPropagation()" class="flex flex-col items-center space-y-1 group">
+      <div
+        class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:bg-white/20 transition-colors">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+        </svg>
+      </div>
+      <span class="text-xs text-gray-300 font-medium tracking-wide">Share</span>
+    </button>
+
+    @if (!isPdf) {
+    <!-- Zoom Controls (Visual indicator/helper) -->
+    <button (click)="zoomLevel() > 1 ? resetZoom() : zoomIn(); $event.stopPropagation()"
+      class="flex flex-col items-center space-y-1 group">
+      <div
+        class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center group-hover:bg-white/20 transition-colors">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          @if (zoomLevel() > 1) {
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+          } @else {
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+          }
+        </svg>
+      </div>
+      <span class="text-xs text-gray-300 font-medium tracking-wide">{{ zoomLevel() > 1 ? 'Reset' : 'Zoom' }}</span>
+    </button>
+    }
+  </footer>
+
+  <!-- Confirm Delete Dialog -->
+  @if (showDeleteConfirm()) {
+  <app-confirm-dialog title="Delete Document?"
+    message="Are you sure you want to delete this document? This action cannot be undone." confirmText="Yes, Delete"
+    cancelText="Cancel" [isLoading]="isDeleting()" (confirm)="confirmDelete()" (cancel)="cancelDelete()">
+  </app-confirm-dialog>
+  }
+
+</div>

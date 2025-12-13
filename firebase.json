@@ -1,5 +1,6 @@
 {
     "hosting": {
+        "site": "walletdoc",
         "public": "dist/walletDoc/browser",
         "ignore": [
             "firebase.json",

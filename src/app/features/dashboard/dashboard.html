@@ -1,112 +1,139 @@
-<div class="min-h-screen bg-gray-50 flex flex-col relative">
-  <!-- Header (Sticky) -->
-  <header class="bg-white border-b border-gray-200 shrink-0 sticky top-0 z-40 shadow-sm">
-    <div class="px-4 py-4">
-      <div class="flex justify-between items-center mb-1">
-        <h1 class="text-2xl font-black text-gray-900 tracking-tighter uppercase">Go Paperless</h1>
-        @if (!userService.isRestricted()) {
-        @if (stats.profileImage) {
-        <img [src]="stats.profileImage"
-          class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-lg cursor-pointer hover:scale-105 transition-transform block"
-          (click)="onProfileSelect()">
-        } @else {
-        <div
-          class="w-10 h-10 bg-linear-to-br from-[#4c49c3] to-[#2d2b6b] rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20 cursor-pointer hover:scale-105 transition-transform"
-          (click)="onProfileSelect()">
-          {{ (auth.user()?.name || 'U').charAt(0).toUpperCase() }}
-        </div>
-        }
-        }
-      </div>
-      <p class="text-gray-500 text-sm font-medium">Scan, Store, and Travel Light</p>
-    </div>
-  </header>
+<div class="min-h-screen bg-[#f2f4f6] flex flex-col relative font-sans text-slate-800">
 
-  <!-- Main Content - Scrollable -->
-  <main class="flex-1 overflow-y-auto pb-24">
-    <div class="px-4 py-6 space-y-8">
-      <!-- Stats Overview -->
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto pb-32 px-4 pt-4">
+    <div class="space-y-6">
+
+      <!-- Unified Hero Panel -->
       @if (!userService.isRestricted()) {
-      <div class="grid grid-cols-2 gap-4">
-        <!-- Total Stored -->
+      <div
+        class="bg-[#1a1b1e] rounded-[2rem] p-6 relative overflow-hidden shadow-2xl shadow-indigo-900/10 animate-fade-in-up">
+
+        <!-- Animated Background -->
         <div
-          class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-center">
-          <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center me-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-              </path>
-            </svg>
+          class="absolute inset-0 bg-linear-to-br from-transparent via-black/20 to-black/60 z-10 pointer-events-none">
+        </div>
+        <div
+          class="absolute -right-20 -top-20 w-64 h-64 bg-[#4c49c3] rounded-full blur-[80px] opacity-40 animate-pulse pointer-events-none">
+        </div>
+        <div
+          class="absolute -left-10 bottom-0 w-40 h-40 bg-purple-500 rounded-full blur-[60px] opacity-20 pointer-events-none">
+        </div>
+
+        <!-- Top Row: User & Profile -->
+        <div class="relative z-20 flex justify-between items-start mb-6">
+          <div>
+            <p class="text-[#a5a3ff] text-xs font-bold uppercase tracking-widest mb-1">Welcome Back</p>
+            <h1 class="text-3xl font-black text-white tracking-tight">{{ userName }}</h1>
           </div>
-          <div class="flex flex-col">
-            <span class="text-3xl font-black text-gray-900 tracking-tight">{{ stats.totalDocs }}</span>
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1">Stored Docs</span>
+
+          <div class="relative group cursor-pointer" (click)="onProfileSelect()">
+            @if (stats.profileImage) {
+            <img [src]="stats.profileImage"
+              class="w-12 h-12 rounded-2xl object-cover border-2 border-white/10 shadow-lg transition-transform duration-300 group-hover:scale-105">
+            } @else {
+            <div
+              class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-white font-bold text-lg border border-white/10 transition-transform duration-300 group-hover:scale-105">
+              {{ (auth.user()?.name || 'U').charAt(0).toUpperCase() }}
+            </div>
+            }
           </div>
         </div>
 
-        <!-- Cloud Storage -->
-        <div
-          class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center text-center">
-          <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center me-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path>
-            </svg>
+        <!-- Bottom Row: Stats & Action -->
+        <div class="relative z-20 flex items-end justify-between">
+
+          <!-- Stats Stack -->
+          <div class="flex gap-6">
+            <!-- Storage -->
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="w-2 h-2 rounded-full bg-[#4c49c3]"></div>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Storage</span>
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-2xl font-bold text-white leading-none">{{ stats.totalSize }}</span>
+                <span class="text-xs font-medium text-slate-500">{{ stats.sizeUnit }}</span>
+              </div>
+            </div>
+
+            <!-- Docs -->
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Documents</span>
+              </div>
+              <span class="text-2xl font-bold text-white leading-none">{{ stats.totalDocs }}</span>
+            </div>
           </div>
-          <div class="flex flex-col">
-            <span class="text-3xl font-black text-gray-900 tracking-tight">{{stats.totalSize}}<span
-                class="text-lg align-top ml-0.5">{{stats.sizeUnit}}</span></span>
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1">Cloud Used</span>
-          </div>
+
+          <!-- ID Action Button -->
+          <button (click)="toggleQrPopup()"
+            class="group flex items-center gap-2 pl-4 pr-2 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full border border-white/5 transition-all active:scale-95">
+            <span class="text-xs font-bold text-white tracking-wide">View ID</span>
+            <div class="w-8 h-8 rounded-full bg-white text-[#1a1b1e] flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 4v1m6 11h2m-6 0h-2v4h-4v-2h4v-4h6v4zM5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                </path>
+              </svg>
+            </div>
+          </button>
         </div>
       </div>
       }
 
-      <!-- Recent Documents -->
-      <div>
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-black text-gray-900 uppercase tracking-wide">Documents</h2>
+      <!-- Recent Documents List -->
+      <div class="animate-fade-in-up delay-300">
+        <div class="flex items-center justify-between mb-6 px-2">
+          <h2 class="text-lg font-bold text-slate-800 tracking-tight">Recent Files</h2>
 
-          <!-- Sort Options -->
+          <!-- Sort Toggles (Minimal) -->
           @if (documents().length > 4) {
-          <div class="flex space-x-2">
-            <button (click)="setSort('date')" [class.bg-gray-900]="sortOption() === 'date'"
-              [class.text-white]="sortOption() === 'date'" [class.bg-white]="sortOption() !== 'date'"
-              [class.text-gray-500]="sortOption() !== 'date'"
-              class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200 transition-colors">
-              Date
+          <div class="bg-white p-1 rounded-xl shadow-sm border border-slate-100 flex gap-1">
+            <button (click)="setSort('date')" [class.bg-slate-100]="sortOption() === 'date'"
+              [class.text-slate-900]="sortOption() === 'date'"
+              class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
             </button>
-            <button (click)="setSort('name')" [class.bg-gray-900]="sortOption() === 'name'"
-              [class.text-white]="sortOption() === 'name'" [class.bg-white]="sortOption() !== 'name'"
-              [class.text-gray-500]="sortOption() !== 'name'"
-              class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200 transition-colors">
-              Name
+            <button (click)="setSort('name')" [class.bg-slate-100]="sortOption() === 'name'"
+              [class.text-slate-900]="sortOption() === 'name'"
+              class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path>
+              </svg>
             </button>
           </div>
           }
         </div>
 
-        <div class="space-y-3">
+        <div class="space-y-4">
           @for (doc of documents(); track doc.id) {
           <div (click)="openDocument(doc)" [class.pointer-events-none]="openingDocId() || togglingDocId()"
-            class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between group hover:shadow-md transition-all active:scale-[0.99] cursor-pointer relative overflow-hidden">
+            class="group relative bg-white rounded-3xl p-4 shadow-sm border border-transparent hover:border-indigo-100 hover:shadow-indigo-100/50 transition-all duration-300 active:scale-[0.98] cursor-pointer overflow-hidden">
 
-            <!-- Opening Loader (Linear Progress) -->
+            <!-- Loading Overlay -->
             @if (openingDocId() === doc.id) {
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-indigo-50">
-              <div class="h-full bg-[#4c49c3] origin-left animate-[loading_1s_ease-in-out_infinite]"></div>
+            <div class="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-20 flex items-center justify-center">
+              <div class="w-6 h-6 border-2 border-[#4c49c3] border-t-transparent rounded-full animate-spin"></div>
             </div>
             }
 
-            <div class="flex items-center space-x-4 transition-opacity duration-300"
-              [class.opacity-50]="openingDocId() === doc.id">
+            <div class="flex items-center gap-4">
               <!-- Icon -->
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center transition-colors"
-                [ngClass]="doc.icon === 'doc' ? 'bg-red-50 text-red-500 group-hover:bg-red-100' : 'bg-blue-50 text-blue-500 group-hover:bg-blue-100'">
+              <div
+                class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-colors duration-300"
+                [ngClass]="doc.icon === 'doc' 
+                                   ? 'bg-rose-50 text-rose-500 group-hover:bg-rose-100' 
+                                   : 'bg-indigo-50 text-indigo-500 group-hover:bg-indigo-100'">
                 @if (doc.icon === 'doc') {
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                   </path>
                 </svg>
                 } @else {
@@ -118,56 +145,44 @@
                 }
               </div>
 
-              <!-- Info -->
-              <div>
-                <h3 class="font-bold text-gray-900 text-sm mb-0.5">{{ doc.name }}</h3>
-                <div class="flex items-center space-x-2 text-xs text-gray-400 font-medium">
+              <!-- Texts -->
+              <div class="flex-1 min-w-0">
+                <h4
+                  class="text-base font-bold text-slate-800 truncate mb-1 group-hover:text-[#4c49c3] transition-colors">
+                  {{ doc.name }}</h4>
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-400">
                   <span>{{ doc.date }}</span>
-                  <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                  <span class="w-1 h-1 rounded-full bg-slate-300"></span>
                   <span>{{ doc.size }}</span>
                 </div>
               </div>
-            </div>
 
-            <!-- Actions -->
-            <!-- @if (!userService.isRestricted()) {
-            <div class="flex items-center space-x-3">
-              <button (click)="toggleVisibility(doc); $event.stopPropagation()" class="focus:outline-none"
-                [disabled]="!!togglingDocId()">
-                @if (togglingDocId() === doc.id) {
-                <div class="w-10 h-6 flex items-center justify-center">
-                  <svg class="animate-spin h-4 w-4 text-[#4c49c3]" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                    </path>
-                  </svg>
-                </div>
-                } @else {
-                <div class="w-10 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out"
-                  [ngClass]="doc.isVisible ? 'bg-[#4c49c3]' : 'bg-gray-200'">
-                  <div
-                    class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ease-in-out"
-                    [ngClass]="doc.isVisible ? 'translate-x-4' : 'translate-x-0'"></div>
-                </div>
-                }
-              </button>
+              <!-- Arrow Action -->
+              <div
+                class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-[#4c49c3] group-hover:text-white transition-all duration-300 transform group-hover:-rotate-45">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                  </path>
+                </svg>
+              </div>
             </div>
-            } -->
           </div>
           }
         </div>
       </div>
+
     </div>
   </main>
 
-  <!-- Floating Action Button (Bottom Right) -->
+  <!-- Floating Action Button -->
   @if (!userService.isRestricted()) {
   <button (click)="openUploadModal()"
-    class="fixed bottom-6 right-6 w-16 h-16 bg-[#1a1b4b] rounded-full shadow-xl shadow-indigo-900/30 flex items-center justify-center text-white hover:scale-110 hover:shadow-2xl hover:shadow-indigo-900/50 active:scale-95 active:bg-[#4c49c3] transition-all duration-300 z-50">
-    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+    class="fixed bottom-8 right-6 w-16 h-16 bg-[#1a1b1e] rounded-[1.5rem] shadow-2xl shadow-indigo-900/40 flex items-center justify-center text-white hover:scale-110 hover:rotate-90 transition-all duration-300 z-50 group">
+    <div
+      class="absolute inset-0 bg-indigo-500 rounded-[1.5rem] blur opacity-20 group-hover:opacity-40 transition-opacity">
+    </div>
+    <svg class="w-8 h-8 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
     </svg>
   </button>
   }
@@ -176,6 +191,11 @@
   @if (showUploadModal()) {
   <app-upload-document (closeEvent)="closeUploadModal()" (uploadEvent)="handleUpload($event)">
   </app-upload-document>
+  }
+
+  <!-- QR Layout -->
+  @if (showQrPopup()) {
+  <app-qr-id-card [user]="qrUser()" (close)="closeQrPopup()"></app-qr-id-card>
   }
 </div>
 

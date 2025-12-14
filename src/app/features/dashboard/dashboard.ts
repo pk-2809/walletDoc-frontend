@@ -7,6 +7,7 @@ import { UserService } from '../../core/services/user';
 import { Document as DocumentService } from '../../core/services/document'; // Renaming to avoid clash with interface
 import { DocumentList } from '../../core/models/dashboard.model';
 import { Utility } from '../../shared/utils/utility';
+import { QrIdCardComponent, QrUser } from '../../shared/components/qr-id-card/qr-id-card';
 
 interface Document {
   id: string;
@@ -22,7 +23,7 @@ interface Document {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, UploadDocumentComponent],
+  imports: [CommonModule, UploadDocumentComponent, QrIdCardComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -39,11 +40,26 @@ export class DashboardComponent {
     totalDocs: 0,
     totalSize: '0',
     sizeUnit: '',
-    profileImage: ''
+    profileImage: '',
+    usedPercentage: 0,
+    totalStorageLimit: 50
   };
 
   showUploadModal = signal(false);
+  showQrPopup = signal(false);
   sortOption = signal<'date' | 'name' | 'size'>('date');
+
+  // Computed QrUser for the shared component
+  qrUser = computed<QrUser>(() => {
+    const user = this.userService.currentUser();
+    return {
+      name: user?.name || '',
+      email: user?.email || '',
+      qrData: `${window.location.origin}/verify-pin?scanId=${user?.id}`,
+      joinedAt: this.utilityService.getFirebaseTimeStamp(user?.joinedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) || '',
+      profilePic: user?.profileImage || ''
+    };
+  });
 
   // Loading States
   openingDocId = signal<string | null>(null);
@@ -58,6 +74,10 @@ export class DashboardComponent {
       this.stats.totalSize = this.utilityService.getSizeWithoutUnit(userDocuments?.storageUsed || 0);
       this.stats.sizeUnit = this.utilityService.getUnitbySize(userDocuments?.storageUsed || 0);
       this.stats.profileImage = this.userService.currentUser()?.profileImage || '';
+
+      const used = userDocuments?.storageUsed || 0;
+      this.stats.usedPercentage = this.utilityService.getPercentage(used, this.stats.totalStorageLimit);
+
       userDocuments?.documentList.forEach((docItem: DocumentList) => {
         const doc: Document = {
           id: docItem.docId,
@@ -94,6 +114,15 @@ export class DashboardComponent {
 
   onProfileSelect() {
     this.router.navigate(['/dashboard/profile']);
+  }
+
+  // QR Logic
+  toggleQrPopup() {
+    this.showQrPopup.update(val => !val);
+  }
+
+  closeQrPopup() {
+    this.showQrPopup.set(false);
   }
 
   // Upload Logic

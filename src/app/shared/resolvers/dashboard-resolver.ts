@@ -6,6 +6,6 @@ export const dashboardResolver: ResolveFn<boolean> = (route, state) => {
 
   const userService = inject(UserService);
 
-  return userService.getUserDetails();
+  return userService.getUserDetails(true);
 
 };

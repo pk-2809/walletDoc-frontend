@@ -27,7 +27,7 @@ interface DocumentModel {
       <!-- Modal -->
       <div class="bg-white rounded-4xl w-full max-w-sm p-6 relative z-10 shadow-2xl animate-in fade-in zoom-in duration-200">
         
-        @if (!isUploading() && !isSuccess()) {
+        @if (!isSuccess()) {
           <!-- Header -->
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-black text-gray-900 uppercase tracking-wide">Add Document</h2>
@@ -76,19 +76,7 @@ interface DocumentModel {
           </div>
         }
 
-        @if (isUploading()) {
-          <div class="py-10 flex flex-col items-center justify-center text-center">
-            <div class="relative w-24 h-24 mb-6">
-              <div class="absolute inset-0 border-4 border-gray-100 rounded-full"></div>
-              <div class="absolute inset-0 border-4 border-[#4c49c3] rounded-full border-t-transparent animate-spin"></div>
-              <div class="absolute inset-0 flex items-center justify-center text-[#4c49c3]">
-                <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-              </div>
-            </div>
-            <h3 class="text-xl font-black text-gray-900 uppercase tracking-wide mb-2">Uploading...</h3>
-            <p class="text-gray-500 text-sm font-medium">Encrypting and storing your file</p>
-          </div>
-        }
+
 
         @if (isSuccess()) {
           <div class="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">

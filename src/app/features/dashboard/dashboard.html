@@ -130,13 +130,11 @@
             </div>
 
             <!-- Actions -->
-            @if (!userService.isRestricted()) {
+            <!-- @if (!userService.isRestricted()) {
             <div class="flex items-center space-x-3">
-              <!-- Visibility Toggle -->
               <button (click)="toggleVisibility(doc); $event.stopPropagation()" class="focus:outline-none"
                 [disabled]="!!togglingDocId()">
                 @if (togglingDocId() === doc.id) {
-                <!-- Spinner when toggling -->
                 <div class="w-10 h-6 flex items-center justify-center">
                   <svg class="animate-spin h-4 w-4 text-[#4c49c3]" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24">
@@ -156,7 +154,7 @@
                 }
               </button>
             </div>
-            }
+            } -->
           </div>
           }
         </div>

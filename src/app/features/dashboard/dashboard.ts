@@ -109,6 +109,7 @@ export class DashboardComponent {
     this.rawDocuments.update(docs => [event, ...docs]);
     const totalSize = this.rawDocuments().reduce((sum, doc) => sum + (doc.rawSize || 0), 0);
     this.stats.totalSize = this.utilityService.getSizeWithoutUnit(totalSize);
+    this.stats.sizeUnit = this.utilityService.getUnitbySize(totalSize);
     this.stats.totalDocs++;
   }
 
@@ -138,17 +139,11 @@ export class DashboardComponent {
   }
 
   openDocument(doc: Document) {
-    // Prevent interaction if any action is in progress
     if (this.openingDocId() || this.togglingDocId()) return;
 
     this.openingDocId.set(doc.id);
-    // Small delay to show loader or wait for something if needed, but mainly visual feedback
-    // If you need to fetch something before nav, do it here. 
-    // For now, just nav immediately but keeping signal ref for template if we want to delay.
-    setTimeout(() => {
-      this.router.navigate(['/dashboard/preview', doc.id]);
-      this.openingDocId.set(null);
-    }, 100);
+    this.router.navigate(['/dashboard/preview', doc.id]);
+    this.openingDocId.set(null);
   }
 
   setSort(option: 'date' | 'name' | 'size') {

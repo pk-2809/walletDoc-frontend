@@ -52,9 +52,16 @@ export class UserService {
     this._currentUser.set(null);
   }
 
-  getUserDetails(): Observable<boolean> {
+  getUserDetails(forceRefresh: boolean = false): Observable<boolean> {
     return new Observable(observer => {
-      if (!this._currentUser() && !this._isRestricted()) {
+      // If user is restricted (e.g. M-PIN Guest), do NOT call auth/me
+      if (this.isRestricted()) {
+        observer.next(true);
+        observer.complete();
+        return;
+      }
+
+      if (!this._currentUser() || forceRefresh) {
         this.api.get(`api/auth/me`).subscribe({
           next: (response: any) => {
             if (response) {
@@ -65,9 +72,9 @@ export class UserService {
             observer.complete();
           },
           error: (error: any) => {
+            // Error handling for 401 is managed by error.interceptor (redirects, toasts)
+            // We just clear local state and resolve false to indicate fetch failed.
             authSignals.clearAuth();
-            this.router.navigate(['/login']);
-            this.toastService.show('Session expired. Please login again.', 'error');
             observer.next(false);
             observer.complete();
           }

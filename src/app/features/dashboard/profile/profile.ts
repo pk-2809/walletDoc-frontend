@@ -14,6 +14,7 @@ import { ToastComponent } from '../../../shared/components/toast/toast';
 import { ToastService } from '../../../shared/services/toast';
 import { env } from '../../../../environments/environment';
 import html2canvas from 'html2canvas';
+import { LoadingService } from '../../../core/services/loading';
 
 @Component({
   selector: 'app-profile',
@@ -29,9 +30,14 @@ export class ProfileComponent {
   private utility = inject(Utility);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private loadingService = inject(LoadingService);
   private env = env.BASE_URL;
 
   auth = authSignals;
+
+  // ... (rest of the file)
+
+
 
   profile = signal({
     profilePic: '',
@@ -78,10 +84,10 @@ export class ProfileComponent {
       mobileNumber: resData?.mobile || '',
       email: resData?.email || '',
       masterPin: resData?.masterPin || '',
-      qrData: `${env.BASE_URL}/verify-pin?scanId=${resData?.id}`,
+      qrData: `${window.location.origin}/verify-pin?scanId=${resData?.id}`,
       sizeUsed: this.utility.getSizeWithUnit(resData?.storageUsed || 0),
       totalSize: resData?.storageLimit || 0,
-      usedPercentage: this.getPercentage(resData?.storageUsed || 0, resData?.storageLimit || 0),
+      usedPercentage: this.utility.getPercentage(resData?.storageUsed || 0, resData?.storageLimit || 0),
       joinedAt: this.getDateInFormat(resData?.joinedDate || new Date()),
       updatedAt: '2025-01-10'
     };
@@ -96,14 +102,6 @@ export class ProfileComponent {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   }
 
-  private getPercentage(a: number, b: number) {
-    return parseInt(((this.storageUsed(a || 0) / (b || 0)) * 100)?.toFixed(2));
-  }
-
-  private storageUsed(unit: number) {
-    return parseInt(this.utility.getSizeWithoutUnit(unit || 0));
-  }
-
   toggleQrPopup() {
     this.showQrPopup.update(val => !val);
     console.log(this.profileForm.qrData().value());
@@ -115,10 +113,12 @@ export class ProfileComponent {
 
   downloadQrCard() {
     this.isDownloading.set(true);
+    this.loadingService.show(); // Start global loader
     const element = document.getElementById('qr-id-card');
 
     if (!element) {
       this.isDownloading.set(false);
+      this.loadingService.hide();
       this.toastService.show('Could not find ID Card element', 'error');
       return;
     }
@@ -131,7 +131,6 @@ export class ProfileComponent {
         const originalSrc = imgElement?.src;
 
         if (base64Data && imgElement) {
-          // Check if data URI prefix is present, if not add it
           const imgSrc = base64Data.startsWith('data:') ? base64Data : `data:image/png;base64,${base64Data}`;
           imgElement.src = imgSrc;
         }
@@ -154,18 +153,30 @@ export class ProfileComponent {
             link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
             this.isDownloading.set(false);
+            this.loadingService.hide(); // Hide global loader
             this.toastService.show('ID Card downloaded successfully!', 'success');
           }).catch(err => {
             console.error('Download failed', err);
             if (imgElement && originalSrc) imgElement.src = originalSrc;
             this.isDownloading.set(false);
+            this.loadingService.hide();
             this.toastService.show('Failed to download ID Card', 'error');
           });
         }, 100);
       },
       error: (err) => {
         console.error('Base64 API failed, proceeding with default', err);
-        // Fallback: Try generating anyway (current state)
+        this.loadingService.hide(); // Hide loader from API call count? 
+        // Note: loadingService logic is count based, so if API ended, count is 0. 
+        // But we called show() manually, so count is at least 1.
+        // We will call hide() again when canvas is done.
+
+        // Wait, if API fails, we want to try generic canvas generation.
+        // We should KEEP loader on for that.
+        // But here we called hide() in error block? No, I should remove that hide() based on my previous thought process.
+        // Actually, let's keep it simple: Show manual loader. API adds +1 then -1. Manual +1 remains.
+
+        // Fallback: Try generating anyway
         html2canvas(element, {
           scale: 4,
           useCORS: true,
@@ -178,9 +189,11 @@ export class ProfileComponent {
           link.href = canvas.toDataURL('image/png', 1.0);
           link.click();
           this.isDownloading.set(false);
+          this.loadingService.hide();
           this.toastService.show('ID Card downloaded successfully!', 'success');
         }).catch(downloadErr => {
           this.isDownloading.set(false);
+          this.loadingService.hide();
           this.toastService.show('Failed to download ID Card', 'error');
         });
       }

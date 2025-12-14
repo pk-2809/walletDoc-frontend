@@ -1,5 +1,5 @@
 import { Component, signal, computed, inject, ChangeDetectionStrategy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Field, form } from '@angular/forms/signals';
 import { isValidEmail, isStrongPassword } from '../../../shared/utils/validators';
 import { AuthService } from '../auth';
@@ -20,9 +20,10 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private toastService = inject(ToastService);
+  private route = inject(ActivatedRoute);
 
   login = signal({
-    email: '',
+    email: this.route.snapshot.queryParams['email'] || '',
     password: '',
     showPassword: false
   });

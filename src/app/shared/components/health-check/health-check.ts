@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HealthCheckService } from '../../../core/services/health-check';
 import { env } from '../../../../environments/environment';
@@ -13,6 +13,8 @@ import { env } from '../../../../environments/environment';
 })
 export class HealthCheckComponent implements OnInit {
   private healthCheckService = inject(HealthCheckService);
+
+  @Output() completed = new EventEmitter<void>();
 
   isChecking = signal(true);
   healthCheckFailed = signal(false);
@@ -39,6 +41,7 @@ export class HealthCheckComponent implements OnInit {
           this.statusMessage.set('CONNECTION SECURED.');
           setTimeout(() => {
             this.isChecking.set(false);
+            this.completed.emit();
           }, 1500); // Allow user to see "Secured"
         } else {
           this.isChecking.set(false);

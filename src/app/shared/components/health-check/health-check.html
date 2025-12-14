@@ -1,5 +1,5 @@
 @if (isChecking()) {
-<div class="fixed inset-0 health-check-container flex items-center justify-center z-50">
+<div class="fixed inset-0 health-check-container flex items-center justify-center z-[100]">
     <!-- Radar Rings -->
     <div class="pulse-ring w-20 h-20"></div>
     <div class="pulse-ring w-20 h-20"></div>
@@ -41,7 +41,7 @@
 }
 
 @if (healthCheckFailed()) {
-<div class="fixed inset-0 health-check-container flex items-center justify-center z-50">
+<div class="fixed inset-0 health-check-container flex items-center justify-center z-[100]">
     <div class="text-center px-4 relative z-10 max-w-md w-full">
         <!-- Error Icon -->
         <div class="mb-8 flex justify-center">

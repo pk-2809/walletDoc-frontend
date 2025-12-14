@@ -35,7 +35,8 @@
   </header>
 
   <!-- Main Content Area -->
-  <main class="flex-1 relative flex items-center justify-center bg-black w-full h-full" (click)="toggleControls()">
+  <main class="flex-1 relative flex items-center justify-center bg-black w-full h-full transition-opacity duration-300"
+    [class.opacity-0]="!isContentReady()">
 
     @if (document(); as doc) {
     @if (isPdf) {

@@ -9,6 +9,7 @@ import { map } from 'rxjs';
 import { UserService } from '../../core/services/user';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ToastService } from '../../shared/services/toast';
+import { LoadingService } from '../../core/services/loading';
 
 @Component({
     selector: 'app-document-view',
@@ -25,10 +26,37 @@ export class DocumentViewComponent {
     private documentService = inject(Document);
     public userService = inject(UserService);
     private toastService = inject(ToastService);
+    private loadingService = inject(LoadingService);
+
+    // UI State
+    showControls = signal(true);
+    isContentReady = signal(false); // New signal to control visibility
 
     docId = signal<string | null>(null);
     private documentData = toSignal(
-        this.route.data.pipe(map(data => data['docData'] ?? null))
+        this.route.data.pipe(
+            map(data => {
+                const doc: any = data['docData'] ?? null;
+                // Preload image if it exists
+                if (doc && !doc.docType.includes('pdf') && doc.docUrl) {
+                    const img = new Image();
+                    img.src = doc.docUrl;
+                    img.onload = () => {
+                        this.isContentReady.set(true);
+                        this.loadingService.hide();
+                    };
+                    img.onerror = () => {
+                        this.isContentReady.set(true); // Show anyway on error
+                        this.loadingService.hide();
+                    };
+                } else {
+                    // PDF or no doc
+                    this.isContentReady.set(true);
+                    this.loadingService.hide();
+                }
+                return doc;
+            })
+        )
     );
     document = computed(() => this.documentData());
     @ViewChild('imageRef') imageRef?: ElementRef<HTMLImageElement>;
@@ -39,9 +67,6 @@ export class DocumentViewComponent {
     startX = 0;
     startY = 0;
 
-    // UI State
-    showControls = signal(true);
-
     goBack() {
         this.router.navigate(['/dashboard']);
     }
@@ -50,41 +75,14 @@ export class DocumentViewComponent {
         const doc = this.document();
         if (!doc) return;
 
-        const shareData = {
-            title: doc.docName,
-            text: 'Check out this document',
-            url: doc.docUrl || window.location.href
-        };
+        const shareUrl = doc.docUrl || window.location.href;
 
-        // 1. Try Native Share
         try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-                return; // Shared successfully
-            }
-        } catch (err) {
-            console.warn('Native share failed or dismissed', err);
-            // Continue to fallback
-        }
-
-        // 2. Fallback: Clipboard API
-        try {
-            await navigator.clipboard.writeText(shareData.url);
-            this.toastService.show('Link copied to clipboard!', 'success');
+            await navigator.clipboard.writeText(shareUrl);
+            this.toastService.show('Document link copied to clipboard!', 'success');
         } catch (clipboardErr) {
             console.error('Clipboard failed', clipboardErr);
-
-            // 3. Ultimate Fallback: Prompt (Works in insecure contexts too)
-            // This ensures the user definitely gets the URL even if everything else fails
-            const manualCopy = confirm('Share not supported. Copy link manually?\n' + shareData.url);
-            if (manualCopy) {
-                // We can't actually copy effectively here without user interaction on a specific element, 
-                // but we can try prompting or just showing it.
-                // Mobile browsers often allow copying from a prompt input if we used prompt().
-                prompt('Copy this link:', shareData.url);
-            } else {
-                this.toastService.show('Could not share link', 'error');
-            }
+            this.toastService.show('Failed to copy link', 'error');
         }
     }
 

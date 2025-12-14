@@ -22,17 +22,29 @@ export class Utility {
 
   getSizeWithUnit(bytes: number): string {
     const data = this.sizeFormatter(bytes);
-    return data[0]+data[1];
+    return data[0] + data[1];
   }
 
   getUnitbySize(bytes: number): string {
     const data = this.sizeFormatter(bytes);
     return data[1];
   }
-  
+
   getSizeWithoutUnit(bytes: number): string {
     const data = this.sizeFormatter(bytes);
     return data[0];
   }
 
+  getSizeInMB(bytes: number): string {
+    if (bytes === 0) return '0';
+    const k = 1024 * 1024;
+    return (bytes / k).toFixed(2);
+  }
+
+  getPercentage(usedBytes: number, totalLimitInMB: number): number {
+    if (!usedBytes || !totalLimitInMB) return 0;
+    const totalBytes = totalLimitInMB * 1024 * 1024;
+    const percentage = (usedBytes / totalBytes) * 100;
+    return parseFloat(percentage.toFixed(2));
+  }
 }
